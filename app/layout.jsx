@@ -18,6 +18,7 @@ export default function RootLayout({ children }) {
             <a href="/teacher">Teacher</a>
             <a href="/student">Student</a>
             <a href="/parent">Parent</a>
+            <a href="/counselor">Counselor</a>
             <a href="/admin">Admin</a>
           </div>
         </nav>

@@ -1,102 +1,141 @@
 "use client";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, BarChart, Bar
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Legend,
 } from "recharts";
 
-const testPerformance = [
-  { name: "Test 51", score: 540 },
-  { name: "Test 57", score: 647 },
-  { name: "Test 61", score: 630 },
-];
-
-const subjectProgress = [
-  { subject: "Physics", progress: 94.4 },
-  { subject: "Chemistry", progress: 95.5 },
-  { subject: "Biology", progress: 80 },
-];
+// Mock data
+const studentData = {
+  name: "Swanand V. Bagale",
+  averageScore: 606,
+  consistency: 88,
+  accuracy: 92,
+  improvement: 17,
+  trend: [
+    { test: "Test 51", score: 540 },
+    { test: "Test 57", score: 647 },
+    { test: "Test 61", score: 630 },
+  ],
+  alerts: [
+    "Performance dropped slightly in Test 61 due to Biology section.",
+    "Concept retention rate lower in Physics problem-solving.",
+    "Improvement trend positive, but consistency can be improved.",
+  ],
+  revisionPlan: [
+    { day: "Monday", topic: "Physics – EMI (Derivations)", time: "6:00 PM" },
+    { day: "Tuesday", topic: "Chemistry – Electrochemistry Practice", time: "6:00 PM" },
+    { day: "Wednesday", topic: "Biology – Human Physiology", time: "6:00 PM" },
+    { day: "Thursday", topic: "Physics – Alternating Current", time: "6:00 PM" },
+    { day: "Friday", topic: "Chemistry – Organic Reactions", time: "6:00 PM" },
+    { day: "Saturday", topic: "Biology – Biotechnology Diagrams", time: "5:00 PM" },
+    { day: "Sunday", topic: "Mock Test + Self Evaluation", time: "10:00 AM" },
+  ],
+};
 
 export default function ParentDashboard() {
+  const student = studentData;
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-2">Parent Dashboard</h1>
-      <p className="text-slate-600 mb-6">
-        Overview for <b>Swanand V. Bagale</b>
-      </p>
-
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-white p-4 rounded shadow text-center">
-          <p className="text-sm text-slate-500">Overall Performance</p>
-          <p className="text-xl font-bold text-indigo-600">~91%</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Parent Dashboard</h1>
+          <p className="text-slate-600">
+            Monitoring performance for <b>{student.name}</b>
+          </p>
         </div>
-        <div className="bg-white p-4 rounded shadow text-center">
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg shadow p-4 text-center">
+          <p className="text-sm text-slate-500">Average Score</p>
+          <p className="text-2xl font-bold text-indigo-600">{student.averageScore} / 720</p>
+        </div>
+        <div className="bg-white rounded-lg shadow p-4 text-center">
+          <p className="text-sm text-slate-500">Accuracy</p>
+          <p className="text-2xl font-bold text-emerald-600">{student.accuracy}%</p>
+        </div>
+        <div className="bg-white rounded-lg shadow p-4 text-center">
           <p className="text-sm text-slate-500">Consistency</p>
-          <p className="text-xl font-bold text-green-600">95%</p>
+          <p className="text-2xl font-bold text-blue-600">{student.consistency}%</p>
         </div>
-        <div className="bg-white p-4 rounded shadow text-center">
-          <p className="text-sm text-slate-500">Predicted Score</p>
-          <p className="text-xl font-bold text-emerald-600">650–675 / 720</p>
-        </div>
-      </div>
-
-      {/* Charts */}
-      <div className="grid md:grid-cols-2 gap-4">
-        {/* Test performance line chart */}
-        <div className="bg-white rounded shadow p-4">
-          <h3 className="font-semibold mb-2">Test Performance Over Time</h3>
-          <div style={{ width: "100%", height: 250 }}>
-            <ResponsiveContainer>
-              <LineChart data={testPerformance}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis domain={[0, 720]} />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="score"
-                  stroke="#2563EB"
-                  strokeWidth={3}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Subject progress bar chart */}
-        <div className="bg-white rounded shadow p-4">
-          <h3 className="font-semibold mb-2">Subject Progress</h3>
-          <div style={{ width: "100%", height: 250 }}>
-            <ResponsiveContainer>
-              <BarChart data={subjectProgress}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="subject" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip />
-                <Bar dataKey="progress" fill="#10b981" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        <div className="bg-white rounded-lg shadow p-4 text-center">
+          <p className="text-sm text-slate-500">Overall Improvement</p>
+          <p className="text-2xl font-bold text-orange-500">+{student.improvement}%</p>
         </div>
       </div>
 
-      {/* Remarks */}
-      <div className="bg-white rounded shadow p-4 mt-6">
-        <h3 className="font-semibold mb-2">Teacher Remarks & AI Notes</h3>
-        <ul className="list-disc ml-6 text-slate-700">
-          <li>Physics: Strong recovery; continue daily numericals.</li>
-          <li>Chemistry: Maintain accuracy; practice assertion-reason questions.</li>
-          <li>Biology: Focus on diagrams & genetics visualization.</li>
+      {/* Progress Trend */}
+      <div className="bg-white rounded-lg shadow p-4">
+        <h3 className="font-semibold mb-2">Score Progress</h3>
+        <div style={{ width: "100%", height: 250 }}>
+          <ResponsiveContainer>
+            <LineChart data={student.trend}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="test" />
+              <YAxis domain={[0, 720]} />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="score"
+                stroke="#6366F1"
+                strokeWidth={3}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Performance Alerts */}
+      <div className="bg-white rounded-lg shadow p-4">
+        <h3 className="font-semibold mb-2 text-red-600">AI Performance Alerts</h3>
+        <ul className="list-disc ml-6 space-y-1 text-slate-700">
+          {student.alerts.map((alert, i) => (
+            <li key={i}>{alert}</li>
+          ))}
         </ul>
       </div>
 
-      <div className="text-center mt-8">
-        <button
-          onClick={() => window.print()}
-          className="bg-indigo-600 text-white px-6 py-2 rounded shadow"
-        >
-          Download Report
-        </button>
+      {/* Revision Plan */}
+      <div className="bg-white rounded-lg shadow p-4">
+        <h3 className="font-semibold mb-2">Weekly AI Revision Plan</h3>
+        <table className="w-full text-sm border-collapse">
+          <thead>
+            <tr className="border-b bg-slate-100 text-left">
+              <th className="py-2 px-2">Day</th>
+              <th className="py-2 px-2">Topic</th>
+              <th className="py-2 px-2">Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {student.revisionPlan.map((plan, i) => (
+              <tr key={i} className="border-b hover:bg-slate-50">
+                <td className="py-2 px-2">{plan.day}</td>
+                <td className="py-2 px-2">{plan.topic}</td>
+                <td className="py-2 px-2">{plan.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Motivation Section */}
+      <div className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-lg shadow p-6 text-center">
+        <h3 className="text-lg font-semibold mb-1">Encouragement</h3>
+        <p className="text-sm italic">
+          “Your child’s consistency and curiosity are key.  
+          Encourage short daily revisions over long study hours.”
+        </p>
       </div>
     </div>
   );
