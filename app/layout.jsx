@@ -1,5 +1,5 @@
+// @ts-nocheck
 import "./globals.css";
-
 
 export const metadata = {
   title: "Intelligent Revision Plan",
