@@ -1,60 +1,51 @@
 "use client";
+// @ts-nocheck
 import React, { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  BarChart3,
+  Brain,
+  FileText,
+  RefreshCcw,
+  User,
+  Calendar,
+} from "lucide-react";
 import {
   LineChart,
   Line,
+  CartesianGrid,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
   BarChart,
   Bar,
-  Legend,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
+  ResponsiveContainer,
 } from "recharts";
 
 /**
- * Combined Student Dashboard
- * - Keeps all previous features (rank widget, charts, AI recommendations, 7-day plan, skill radar)
- * - Adds: Upcoming Test popup, Demo 15-question test modal, Alternate-day micro-tests
- * - Ranking is DYNAMIC: calculated from mock class data comparing student average
- *
+ * Student Dashboard with Sidebar + Charts + Micro Tests (Demo Data)
  * Save as: app/student/page.jsx
- * Make sure `recharts` is installed: npm install recharts
+ * npm install recharts lucide-react
  */
 
-/* ----------------------------- Mock / Seed Data ---------------------------- */
-const studentName = "Swanand V. Bagale";
-
-/* Full test history (larger tests) */
-const testTrend = [
-  { name: "Test 51", score: 540 },
-  { name: "Test 57", score: 647 },
-  { name: "Test 61", score: 630 },
+/* --------------------- Demo / Mock Data --------------------- */
+const testPerformance = [
+  { test: "Test 1", score: 72 },
+  { test: "Test 2", score: 78 },
+  { test: "Test 3", score: 84 },
+  { test: "Test 4", score: 88 },
+  { test: "Test 5", score: 92 },
 ];
 
-/* Subject-wise performance (percent) */
-const subjectPerformance = [
-  { subject: "Physics", score: 94 },
-  { subject: "Chemistry", score: 95 },
-  { subject: "Biology", score: 80 },
+const subjectStrength = [
+  { subject: "Math", score: 89 },
+  { subject: "Science", score: 83 },
+  { subject: "English", score: 91 },
+  { subject: "History", score: 77 },
+  { subject: "Geography", score: 85 },
 ];
 
-/* Skill radar */
-const skillRadar = [
-  { skill: "Concept Clarity", value: 85 },
-  { skill: "Speed", value: 75 },
-  { skill: "Accuracy", value: 90 },
-  { skill: "Retention", value: 70 },
-  { skill: "Consistency", value: 88 },
-];
-
-/* Alternate-day micro-tests (15-question mini tests) */
+/* micro-tests (alternate day 15-question tests) */
 const microTestsSeed = [
   { date: "2025-10-12", topic: "Physics - EMI", correct: 11, total: 15 },
   { date: "2025-10-14", topic: "Biology - Physiology", correct: 8, total: 15 },
@@ -63,48 +54,7 @@ const microTestsSeed = [
   { date: "2025-10-20", topic: "Biology - Genetics", correct: 12, total: 15 },
 ];
 
-/* Mock class data used to compute dynamic ranking */
-const classMock = [
-  { name: "Aarav Mehta", avg: 680 },
-  { name: "Riya Sharma", avg: 662 },
-  { name: "Swanand V. Bagale", avg: 647 },
-  { name: "Tanishq Patel", avg: 630 },
-  { name: "Krisha Nair", avg: 615 },
-  { name: "Aditya Rao", avg: 590 },
-  /* more mocked entries to simulate a class of 25 */
-  ...Array.from({ length: 19 }).map((_, i) => ({
-    name: `Student ${i + 7}`,
-    avg: 500 + (i % 100),
-  })),
-];
-
-/* AI recommendations and 7-day plan */
-const aiRecommendationsSeed = [
-  "Revise Biology diagrams daily for 10 mins.",
-  "Focus on EMI derivations; practice step-by-step.",
-  "Use spaced repetition for Chemistry equations.",
-];
-
-const sevenDayPlanSeed = [
-  { day: "Day 1", topic: "Physics – EMI", duration: "90 min" },
-  { day: "Day 2", topic: "Chemistry – Ionic Eq.", duration: "60 min" },
-  { day: "Day 3", topic: "Biology – Human Physiology", duration: "60 min" },
-  { day: "Day 4", topic: "Physics – AC Circuits", duration: "75 min" },
-  { day: "Day 5", topic: "Chemistry – Organic Reactions", duration: "60 min" },
-  { day: "Day 6", topic: "Biology – Diagrams", duration: "90 min" },
-  { day: "Day 7", topic: "AI Mixed Practice Test", duration: "120 min" },
-];
-
-/* Upcoming test info */
-const upcomingTest = {
-  date: "2025-11-02",
-  topic: "Physics – Waves & Oscillations",
-  time: "6:00 PM",
-  note: "15-question micro test covering core numericals",
-};
-
-/* ------------------------------- Demo Test Data ---------------------------- */
-/* 15 demo questions (short sample). For demo we include 15 minimal Qs. */
+/* 15 demo questions for micro test (short sample) */
 const demoQuestionsSeed = [
   { q: "SI unit of electric current?", options: ["Ohm", "Coulomb", "Ampere", "Volt"], answer: "Ampere" },
   { q: "Molecular formula of water?", options: ["H2O", "CO2", "O2", "H2"], answer: "H2O" },
@@ -123,42 +73,28 @@ const demoQuestionsSeed = [
   { q: "Which is a covalent bond?", options: ["NaCl", "H2O", "KCl", "MgO"], answer: "H2O" },
 ];
 
-/* ------------------------------ Helper Utils ------------------------------- */
-const calcStudentAvgFromTrend = (trend) => {
-  if (!trend || trend.length === 0) return 0;
-  const sum = trend.reduce((s, t) => s + (t.score || 0), 0);
-  return Math.round(sum / trend.length);
-};
-
-/* ------------------------------- Component -------------------------------- */
+/* ----------------------- Component -------------------------- */
 export default function StudentDashboard() {
-  // state: keep micro tests and demo test interaction
+  const [activeSection, setActiveSection] = useState("overview");
+
+  // micro-tests state
   const [microTests, setMicroTests] = useState(microTestsSeed);
-  const [aiRecommendations, setAiRecommendations] = useState(aiRecommendationsSeed);
-  const [sevenDayPlan, setSevenDayPlan] = useState(sevenDayPlanSeed);
 
-  // upcoming popup
-  const [showPopup, setShowPopup] = useState(true);
-
-  // demo test modal
+  // demo test modal state
   const [demoActive, setDemoActive] = useState(false);
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [demoSubmitted, setDemoSubmitted] = useState(false);
   const [demoScore, setDemoScore] = useState(0);
 
-  // ranking: dynamic computed from classMock comparing student's avg
-  const studentAvg = useMemo(() => calcStudentAvgFromTrend(testTrend), []);
-  const classSorted = useMemo(() => {
-    const copy = [...classMock];
-    return copy.sort((a, b) => b.avg - a.avg);
-  }, []);
-  const rank = useMemo(() => {
-    const idx = classSorted.findIndex((s) => s.name === studentName);
-    return idx >= 0 ? idx + 1 : classSorted.length + 1;
-  }, [classSorted]);
+  // AI recommendations demo (updates after demo)
+  const [aiRecommendations, setAiRecommendations] = useState([
+    "Revise Biology diagrams daily for 10 mins.",
+    "Focus on EMI derivations; practice step-by-step.",
+    "Use spaced repetition for Chemistry equations.",
+  ]);
 
-  // micro test derived stats
+  // computed micro accuracy
   const microAccuracy = useMemo(() => {
     if (!microTests || microTests.length === 0) return 0;
     const avg =
@@ -171,13 +107,7 @@ export default function StudentDashboard() {
     return [...new Set(microTests.filter((t) => t.correct / t.total < 0.75).map((t) => t.topic))];
   }, [microTests]);
 
-  /* Auto-hide popup after 9 seconds */
-  useEffect(() => {
-    const t = setTimeout(() => setShowPopup(false), 9000);
-    return () => clearTimeout(t);
-  }, []);
-
-  /* Demo test handlers */
+  // demo handlers
   const startDemo = () => {
     setDemoActive(true);
     setCurrentQ(0);
@@ -207,7 +137,7 @@ export default function StudentDashboard() {
     setDemoScore(correct);
     setDemoSubmitted(true);
 
-    // Update microTests to include this demo as latest micro-test
+    // Append micro-test result to microTests
     const newMicro = [
       ...microTests,
       {
@@ -219,240 +149,638 @@ export default function StudentDashboard() {
     ];
     setMicroTests(newMicro);
 
-    // Update AI recommendations lightly (demo: if low score suggest focus)
+    // Update AI recommendations (demo logic)
     if (correct / demoQuestionsSeed.length < 0.7) {
       setAiRecommendations((prev) => [
-        `Demo indicates weakness in mixed fundamentals — focus on diagrams & numericals.`,
+        `Demo indicates weakness in basics — focus on diagrams & definitions.`,
         ...prev,
       ]);
     } else {
       setAiRecommendations((prev) => [
-        `Demo shows solid fundamentals — maintain micro-test rhythm.`,
+        `Demo indicates solid fundamentals — keep the micro-test rhythm.`,
         ...prev,
       ]);
     }
   };
 
-  /* Small helper for display percent */
-  const displayPercent = (n) => (typeof n === "number" ? `${n.toFixed(1)}%` : n);
+  /* Sections meta */
+  const sections = [
+    { id: "overview", title: "Overview", icon: <User size={18} /> },
+    { id: "ai", title: "AI Insights", icon: <Brain size={18} /> },
+    { id: "tests", title: "Tests & Performance", icon: <BarChart3 size={18} /> },
+    { id: "revision", title: "Revision Plan", icon: <RefreshCcw size={18} /> },
+    { id: "reports", title: "Reports", icon: <FileText size={18} /> },
+  ];
 
   return (
-    <div className="space-y-6 p-4">
-      {/* Upcoming test popup */}
-      {showPopup && (
-        <div className="fixed right-5 top-5 z-50 max-w-xs bg-indigo-600 text-white p-4 rounded-lg shadow-lg">
-          <div className="text-sm font-semibold">📅 Upcoming Test</div>
-          <div className="mt-1 text-sm">
-            <div className="font-medium">{upcomingTest.topic}</div>
-            <div className="text-xs">{upcomingTest.date} • {upcomingTest.time}</div>
-          </div>
-          <div className="mt-3 text-xs text-indigo-100">
-            {upcomingTest.note}
-          </div>
-          <div className="mt-3 flex gap-2">
-            <button
-              className="bg-white text-indigo-700 text-xs px-3 py-1 rounded"
-              onClick={() => { setShowPopup(false); startDemo(); }}
-            >
-              Take Demo Now
-            </button>
-            <button
-              className="text-xs underline text-indigo-100 ml-auto"
-              onClick={() => setShowPopup(false)}
-            >
-              Dismiss
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="flex items-start justify-between">
+    <div className="min-h-screen flex bg-slate-50">
+      {/* Sidebar */}
+      <aside className="w-60 bg-white border-r border-slate-200 flex flex-col justify-between fixed inset-y-0">
         <div>
-          <h1 className="text-2xl font-bold">Student Dashboard</h1>
-          <p className="text-sm text-slate-600">Overview & micro-test workflow for <b>{studentName}</b></p>
-        </div>
-
-        <div className="space-y-2 text-right">
-          <div className="text-sm text-slate-500">Predicted next score</div>
-          <div className="text-lg font-semibold text-emerald-600">{studentAvg} / 720</div>
-          <div className="mt-2 text-xs text-slate-500">Rank: <span className="font-semibold text-indigo-600">#{rank}</span> / {classSorted.length}</div>
-          <div className="mt-3 flex gap-2 justify-end">
-            <button onClick={startDemo} className="bg-emerald-600 text-white px-3 py-1 rounded text-sm">🎯 Start Demo Test</button>
-            <button onClick={() => alert("Download PDF (demo)")} className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded text-sm">📄 Download Report</button>
+          <div className="p-4 border-b border-slate-200">
+            <h2 className="text-lg font-bold text-indigo-600">Student Panel</h2>
           </div>
-        </div>
-      </div>
 
-      {/* Key stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded shadow p-4 text-center">
-          <div className="text-xs text-slate-500">Average Score</div>
-          <div className="text-2xl font-bold text-indigo-600">{studentAvg} / 720</div>
-        </div>
-        <div className="bg-white rounded shadow p-4 text-center">
-          <div className="text-xs text-slate-500">Micro Test Accuracy</div>
-          <div className="text-2xl font-bold text-emerald-600">{displayPercent(microAccuracy)}</div>
-        </div>
-        <div className="bg-white rounded shadow p-4 text-center">
-          <div className="text-xs text-slate-500">Weak Topics</div>
-          <div className="text-sm font-semibold text-red-600">{weakTopics.length ? weakTopics.join(", ") : "None"}</div>
-        </div>
-        <div className="bg-white rounded shadow p-4 text-center">
-          <div className="text-xs text-slate-500">Consistency</div>
-          <div className="text-2xl font-bold text-blue-600">88%</div>
-        </div>
-      </div>
-
-      {/* Charts (trend & subject) */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white rounded shadow p-4">
-          <h3 className="font-semibold mb-2">Performance Trend (Full Tests)</h3>
-          <div style={{ height: 260 }}>
-            <ResponsiveContainer>
-              <LineChart data={testTrend}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis domain={[0, 720]} />
-                <Tooltip />
-                <Line type="monotone" dataKey="score" stroke="#6366F1" strokeWidth={3} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="bg-white rounded shadow p-4">
-          <h3 className="font-semibold mb-2">Subject-wise Performance</h3>
-          <div style={{ height: 260 }}>
-            <ResponsiveContainer>
-              <BarChart data={subjectPerformance}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="subject" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="score" fill="#10b981" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* Micro-tests bar chart */}
-      <div className="bg-white rounded shadow p-4">
-        <h3 className="font-semibold mb-2">Alternate Day 15-question Micro Tests</h3>
-        <div style={{ height: 240 }}>
-          <ResponsiveContainer>
-            <BarChart data={microTests}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis domain={[0, 15]} />
-              <Tooltip formatter={(val) => `${val} correct`} />
-              <Bar dataKey="correct" fill="#2563EB" name="Correct Answers" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="mt-2 text-sm text-slate-600">
-          AI Insight: {weakTopics.length ? `Focus more micro-tests on ${weakTopics.join(", ")}.` : "No weak topics detected in micro-tests."}
-        </div>
-      </div>
-
-      {/* Skill radar + Ranking widget */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="bg-white rounded shadow p-4 md:col-span-2">
-          <h3 className="font-semibold mb-2">Learning Skill Map</h3>
-          <div style={{ height: 320 }}>
-            <ResponsiveContainer>
-              <RadarChart data={skillRadar}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="skill" />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} />
-                <Radar name="Skill" dataKey="value" stroke="#2563EB" fill="#2563EB" fillOpacity={0.4} />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="bg-white rounded shadow p-4">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-semibold">Class Ranking</h3>
-            <div className="text-sm text-slate-500">You are <b className="text-indigo-600">#{rank}</b> / {classSorted.length}</div>
-          </div>
-          <div className="overflow-y-auto h-64">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-xs text-slate-500 border-b">
-                  <th className="py-2">Rank</th>
-                  <th className="py-2">Student</th>
-                  <th className="py-2">Avg</th>
-                </tr>
-              </thead>
-              <tbody>
-                {classSorted.slice(0, 25).map((s, i) => (
-                  <tr key={s.name} className={`border-b ${s.name === studentName ? "bg-indigo-50 font-semibold" : "hover:bg-slate-50"}`}>
-                    <td className="py-2">#{i + 1}</td>
-                    <td className="py-2">{s.name}</td>
-                    <td className="py-2">{s.avg}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {/* AI Recommendations */}
-      <div className="bg-white rounded shadow p-4">
-        <h3 className="font-semibold mb-2">AI Personalized Recommendations</h3>
-        <ul className="list-disc ml-6 space-y-1 text-slate-700">
-          {aiRecommendations.map((r, i) => (
-            <li key={i}>{r}</li>
-          ))}
-        </ul>
-      </div>
-
-      {/* 7-Day Revision Plan */}
-      <div className="bg-white rounded shadow p-4">
-        <h3 className="font-semibold mb-2">7-Day AI Revision Plan</h3>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-slate-100 text-left text-xs border-b">
-              <th className="py-2 px-2">Day</th>
-              <th className="py-2 px-2">Focus Topic</th>
-              <th className="py-2 px-2">Duration</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sevenDayPlan.map((d, i) => (
-              <tr key={i} className="border-b hover:bg-slate-50">
-                <td className="py-2 px-2">{d.day}</td>
-                <td className="py-2 px-2">{d.topic}</td>
-                <td className="py-2 px-2">{d.duration}</td>
-              </tr>
+          <nav className="p-3 flex flex-col gap-2">
+            {sections.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setActiveSection(s.id)}
+                className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md font-medium transition-all ${
+                  activeSection === s.id
+                    ? "bg-indigo-100 text-indigo-700"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                {s.icon} {s.title}
+              </button>
             ))}
-          </tbody>
-        </table>
+          </nav>
+        </div>
+
+        <div className="p-4 border-t border-slate-200 text-xs text-slate-500">
+          © 2025 Intelligent Revision Plan
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="ml-60 flex-1 p-6 space-y-8">
+        {/* Overview */}
+        {activeSection === "overview" && (
+          <motion.div
+            key="overview"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <h1 className="text-2xl font-bold text-slate-800 mb-6">
+              Dashboard Overview
+            </h1>
+
+            {/* Stats Cards */}
+            <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+              {[
+                { label: "Average Score", value: "86%" },
+                { label: "Tests Completed", value: "12" },
+                { label: "Micro Test Accuracy", value: `${microAccuracy.toFixed(1)}%` },
+                { label: "AI Rank", value: "#4 / 25" },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="bg-white p-5 rounded-xl shadow-sm border border-slate-100"
+                >
+                  <h3 className="text-sm text-slate-500 mb-1">{stat.label}</h3>
+                  <p className="text-2xl font-bold text-indigo-600">
+                    {stat.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Line Chart */}
+              <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+                <h3 className="text-lg font-semibold text-slate-800 mb-3">
+                  Performance Trend
+                </h3>
+                <ResponsiveContainer width="100%" height={260}>
+                  <LineChart data={testPerformance}>
+                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                    <XAxis dataKey="test" />
+                    <YAxis domain={[60, 100]} />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="score"
+                      stroke="#4f46e5"
+                      strokeWidth={3}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Bar Chart */}
+              <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+                <h3 className="text-lg font-semibold text-slate-800 mb-3">
+                  Subject Strengths
+                </h3>
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={subjectStrength}>
+                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                    <XAxis dataKey="subject" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="score" fill="#6366f1" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Upcoming Test */}
+            <div className="mt-10 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-800 mb-3">
+                Upcoming Test
+              </h3>
+              <div className="flex items-center gap-3 text-slate-700">
+                <Calendar className="text-indigo-600" size={20} />
+                <span>Next test on <b>5th Nov</b> — Science (Chapter 6)</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* AI Insights */}
+        {activeSection === "ai" && (
+  <motion.div
+    key="ai"
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4 }}
+  >
+    <h1 className="text-2xl font-bold text-slate-800 mb-4">
+      AI Insights & Smart Recommendations
+    </h1>
+
+    <p className="text-slate-600 mb-8">
+      The IRP AI continuously tracks your academic progress, learning behavior,
+      and test patterns to generate personalized, actionable insights.
+    </p>
+
+    {/* AI Metric Cards */}
+    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      {[
+        { label: "AI Confidence", value: "87%", desc: "AI prediction accuracy", color: "bg-indigo-100 text-indigo-700" },
+        { label: "Consistency Index", value: "92%", desc: "Daily performance stability", color: "bg-emerald-100 text-emerald-700" },
+        { label: "Weak Topics", value: "3", desc: "Physics, Biology, Chemistry", color: "bg-amber-100 text-amber-700" },
+        { label: "Improvement Rate", value: "+14%", desc: "Overall growth trend", color: "bg-blue-100 text-blue-700" },
+      ].map((item, i) => (
+        <div
+          key={i}
+          className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition"
+        >
+          <h3 className="text-sm text-slate-500 mb-1">{item.label}</h3>
+          <p className={`text-2xl font-bold ${item.color}`}>{item.value}</p>
+          <p className="text-xs text-slate-500 mt-1">{item.desc}</p>
+        </div>
+      ))}
+    </div>
+
+    {/* AI Analysis Charts */}
+    <div className="grid lg:grid-cols-2 gap-8 mb-10">
+      {/* Radar Chart - Mock Skills */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+        <h3 className="text-lg font-semibold text-slate-800 mb-4">
+          Subject Strength Map
+        </h3>
+        <ResponsiveContainer width="100%" height={260}>
+          <BarChart
+            data={[
+              { subject: "Physics", score: 78 },
+              { subject: "Chemistry", score: 83 },
+              { subject: "Biology", score: 69 },
+              { subject: "Math", score: 91 },
+              { subject: "English", score: 88 },
+            ]}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="subject" />
+            <YAxis domain={[50, 100]} />
+            <Tooltip />
+            <Bar dataKey="score" fill="#4f46e5" radius={[6, 6, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
-      {/* Motivation */}
-      <div className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded shadow p-6 text-center">
-        <h3 className="text-lg font-semibold">AI Motivation</h3>
-        <p className="text-sm italic">“Small daily progress adds up — keep taking micro-tests and review weak topics.”</p>
+      {/* Line Chart - Accuracy Growth */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+        <h3 className="text-lg font-semibold text-slate-800 mb-4">
+          Accuracy Improvement Over Time
+        </h3>
+        <ResponsiveContainer width="100%" height={260}>
+          <LineChart
+            data={[
+              { week: "Week 1", accuracy: 72 },
+              { week: "Week 2", accuracy: 78 },
+              { week: "Week 3", accuracy: 84 },
+              { week: "Week 4", accuracy: 89 },
+              { week: "Week 5", accuracy: 92 },
+            ]}
+          >
+            <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+            <XAxis dataKey="week" />
+            <YAxis domain={[60, 100]} />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="accuracy"
+              stroke="#10b981"
+              strokeWidth={3}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+
+    {/* Smart Insights Feed */}
+    <div className="grid lg:grid-cols-3 gap-6 mb-10">
+      {[
+        {
+          tag: "Critical",
+          color: "bg-red-100 text-red-700",
+          title: "Physics – Force & Motion",
+          desc: "Low accuracy in numericals. AI recommends daily 10-min speed drills.",
+        },
+        {
+          tag: "Improving",
+          color: "bg-green-100 text-green-700",
+          title: "Chemistry – Acids & Bases",
+          desc: "Accuracy increased by 15%. Keep practicing with AI test cards.",
+        },
+        {
+          tag: "Stable",
+          color: "bg-blue-100 text-blue-700",
+          title: "Math – Linear Equations",
+          desc: "Maintaining 90% accuracy. AI recommends a concept check every 3 days.",
+        },
+      ].map((card, i) => (
+        <div
+          key={i}
+          className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition"
+        >
+          <div className="flex justify-between mb-2">
+            <span
+              className={`text-xs font-medium px-2 py-1 rounded-full ${card.color}`}
+            >
+              {card.tag}
+            </span>
+            <span className="text-xs text-slate-400">AI Insight</span>
+          </div>
+          <h4 className="font-semibold text-slate-800 mb-1">{card.title}</h4>
+          <p className="text-sm text-slate-600">{card.desc}</p>
+        </div>
+      ))}
+    </div>
+
+    {/* AI Actionable Suggestions */}
+    <div className="bg-gradient-to-r from-indigo-50 to-slate-50 p-6 rounded-xl border border-slate-200 shadow-sm">
+      <h3 className="text-lg font-semibold text-slate-800 mb-3">
+        AI Suggested Actions
+      </h3>
+      <ul className="list-disc list-inside text-slate-700 text-sm space-y-2">
+        <li>
+          Schedule one <span className="font-semibold">AI practice test</span>{" "}
+          every 2 days.
+        </li>
+        <li>
+          Revise <span className="font-semibold">weak chapters</span> first,
+          before taking the next test.
+        </li>
+        <li>
+          Use AI feedback to prioritize high-weightage topics for upcoming exams.
+        </li>
+        <li>
+          Maintain minimum <span className="font-semibold">85% consistency</span>{" "}
+          to trigger advanced recommendations.
+        </li>
+      </ul>
+    </div>
+  </motion.div>
+)}
+
+        {/* Tests & Performance (with Micro-tests + Demo) */}
+        {activeSection === "tests" && (
+          <motion.div
+            key="tests"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-2xl font-bold text-slate-800">Tests & Performance</h1>
+              <div className="flex gap-2">
+                <button
+                  onClick={startDemo}
+                  className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 text-sm"
+                >
+                  🎯 Take Micro Test
+                </button>
+              </div>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* Micro-test List */}
+              <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                <h3 className="font-semibold mb-3">Micro Tests (15 questions)</h3>
+                <p className="text-sm text-slate-600 mb-3">
+                  Alternate-day micro-tests to improve accuracy on weak topics.
+                </p>
+
+                <div className="space-y-2 max-h-64 overflow-auto">
+                  {microTests.slice().reverse().map((m, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between bg-slate-50 p-3 rounded-md"
+                    >
+                      <div>
+                        <div className="text-sm font-medium">{m.topic}</div>
+                        <div className="text-xs text-slate-500">{m.date}</div>
+                      </div>
+                      <div className="text-sm font-semibold text-indigo-600">
+                        {m.correct} / {m.total}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Micro-test Chart */}
+              <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                <h3 className="font-semibold mb-3">Micro Tests — Correct Answers</h3>
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={microTests}>
+                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                    <XAxis dataKey="date" />
+                    <YAxis domain={[0, 15]} />
+                    <Tooltip formatter={(val) => `${val} correct`} />
+                    <Bar dataKey="correct" fill="#10b981" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+
+                <div className="mt-3 text-sm text-slate-600">
+                  AI Insight: {weakTopics.length ? `Focus more micro-tests on ${weakTopics.join(", ")}.` : "No weak topics detected in recent micro-tests."}
+                </div>
+              </div>
+            </div>
+
+            {/* Ranking / Batch (kept simple demo) */}
+            <div className="mt-6 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+              <h3 className="font-semibold mb-3">Batch Ranking (demo)</h3>
+              <div className="grid grid-cols-2 gap-2 max-w-md">
+                <div className="text-sm text-slate-500">Your Rank</div>
+                <div className="text-sm font-semibold text-indigo-600">#4 / 25</div>
+                <div className="text-sm text-slate-500">Last Test Score</div>
+                <div className="text-sm font-semibold text-indigo-600">84%</div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Revision Plan */}
+       {activeSection === "revision" && (
+  <motion.div
+    key="revision"
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4 }}
+  >
+    <h1 className="text-2xl font-bold text-slate-800 mb-4">
+      Detailed AI Revision Plan
+    </h1>
+
+    <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+      <p className="text-slate-600 mb-6">
+        This week’s revision plan is generated based on your recent test data,
+        weak concepts, and AI performance tracking. Follow the day-wise plan
+        below to strengthen your core subjects.
+      </p>
+
+      {/* Week Timeline */}
+      <div className="relative border-l-2 border-indigo-200 ml-4">
+        {[
+          {
+            day: "Monday",
+            topic: "Force & Motion",
+            difficulty: "Moderate",
+            tasks: [
+              "Revise Newton's laws and formula derivations",
+              "Solve 15 AI-generated questions",
+              "Watch 10-min concept video",
+            ],
+            aiNote:
+              "Focus on the 2nd Law numericals — accuracy dropped by 10% in last test.",
+          },
+          {
+            day: "Tuesday",
+            topic: "Atoms & Molecules",
+            difficulty: "Easy",
+            tasks: [
+              "Quick recap of symbols and valency rules",
+              "Take 10-question quick quiz",
+              "Review errors from previous micro-test",
+            ],
+            aiNote:
+              "You consistently score above 80%, maintain light revision load today.",
+          },
+          {
+            day: "Wednesday",
+            topic: "Chemical Reactions",
+            difficulty: "Challenging",
+            tasks: [
+              "Write 3 balanced equations daily",
+              "Read reaction type chart",
+              "Take AI quiz (15 questions)",
+            ],
+            aiNote:
+              "This topic showed lowest retention; AI suggests spaced repetition.",
+          },
+          {
+            day: "Thursday",
+            topic: "Sound & Waves",
+            difficulty: "Moderate",
+            tasks: [
+              "Revise wave formulas",
+              "Practice numericals from workbook",
+              "Review 5 AI feedback notes",
+            ],
+            aiNote:
+              "Speed of solving numericals is improving — maintain current pace.",
+          },
+          {
+            day: "Friday",
+            topic: "Light & Reflection",
+            difficulty: "Easy",
+            tasks: [
+              "Revise ray diagram rules",
+              "Complete 10 MCQs (AI-generated)",
+              "Summarize mirror formulas",
+            ],
+            aiNote: "Focus on accuracy, not speed today.",
+          },
+          {
+            day: "Saturday",
+            topic: "Biology – Human Systems",
+            difficulty: "Hard",
+            tasks: [
+              "Label diagrams of heart and lungs",
+              "Take 15-question test",
+              "Review 3 AI weak zones",
+            ],
+            aiNote: "Low accuracy in structure labeling — use visual memory aids.",
+          },
+          {
+            day: "Sunday",
+            topic: "AI Self-Test & Analysis",
+            difficulty: "Mixed",
+            tasks: [
+              "Attempt AI-generated mock test (25 questions)",
+              "Review complete weekly analytics",
+              "Generate next week’s plan",
+            ],
+            aiNote:
+              "End of week: AI will create next plan based on test outcomes.",
+          },
+        ].map((day, idx) => (
+          <div key={day.day} className="mb-8 ml-6 relative">
+            <span className="absolute -left-[1.05rem] top-2 w-3 h-3 bg-indigo-500 rounded-full"></span>
+            <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-semibold text-indigo-700">
+                  {day.day} – {day.topic}
+                </h3>
+                <span
+                  className={`text-xs font-medium px-2 py-1 rounded-full ${
+                    day.difficulty === "Easy"
+                      ? "bg-green-100 text-green-700"
+                      : day.difficulty === "Moderate"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {day.difficulty}
+                </span>
+              </div>
+
+              <ul className="list-disc list-inside text-slate-600 text-sm space-y-1 mb-3">
+                {day.tasks.map((t, i) => (
+                  <li key={i}>{t}</li>
+                ))}
+              </ul>
+
+              <div className="bg-indigo-50 text-sm text-indigo-800 px-3 py-2 rounded-md border-l-4 border-indigo-400">
+                <strong>AI Note:</strong> {day.aiNote}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </motion.div>
+)}
+
+
+       {activeSection === "reports" && (
+  <motion.div
+    key="reports"
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4 }}
+  >
+    <h1 className="text-2xl font-bold text-slate-800 mb-6">
+      Reports & Analytics
+    </h1>
+
+    <p className="text-slate-600 mb-8">
+      Get a detailed AI-generated performance analysis — track consistency,
+      improvement, and download your progress reports in one click.
+    </p>
+
+    {/* Report Summary Cards */}
+    <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+      {[
+        { label: "Overall Performance", value: "84%", desc: "Across last 3 tests", color: "bg-indigo-100 text-indigo-700" },
+        { label: "AI Predicted Growth", value: "+11%", desc: "Expected improvement next cycle", color: "bg-emerald-100 text-emerald-700" },
+        { label: "Test Consistency", value: "91%", desc: "Average accuracy stability", color: "bg-amber-100 text-amber-700" },
+        { label: "Total Tests Taken", value: "15", desc: "Including micro-tests", color: "bg-blue-100 text-blue-700" },
+      ].map((item, i) => (
+        <div
+          key={i}
+          className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition"
+        >
+          <h3 className="text-sm text-slate-500 mb-1">{item.label}</h3>
+          <p className={`text-2xl font-bold ${item.color}`}>{item.value}</p>
+          <p className="text-xs text-slate-500 mt-1">{item.desc}</p>
+        </div>
+      ))}
+    </div>
+
+    {/* Performance Chart */}
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 mb-10">
+      <h3 className="text-lg font-semibold text-slate-800 mb-4">
+        AI Performance Overview
+      </h3>
+      <ResponsiveContainer width="100%" height={260}>
+        <LineChart
+          data={[
+            { test: "Test 51", score: 72 },
+            { test: "Test 57", score: 81 },
+            { test: "Test 61", score: 88 },
+            { test: "Micro Test", score: 90 },
+            { test: "Demo Test", score: 92 },
+          ]}
+        >
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+          <XAxis dataKey="test" />
+          <YAxis domain={[60, 100]} />
+          <Tooltip />
+          <Line
+            type="monotone"
+            dataKey="score"
+            stroke="#4f46e5"
+            strokeWidth={3}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+
+    {/* Download Report Section */}
+    <div className="bg-gradient-to-r from-indigo-50 to-slate-50 p-8 rounded-xl border border-slate-200 shadow-sm text-center">
+      <h3 className="text-xl font-semibold text-slate-800 mb-2">
+        Download Your Complete Report
+      </h3>
+      <p className="text-slate-600 mb-6">
+        Generate a personalized AI-based PDF report summarizing your overall
+        progress, strengths, and next-step recommendations.
+      </p>
+
+      <div className="flex flex-col sm:flex-row justify-center gap-4">
+        <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 shadow transition flex items-center justify-center gap-2">
+          <FileText size={18} /> Download Full Report
+        </button>
+
+        <button className="border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-indigo-50 transition flex items-center justify-center gap-2">
+          <BarChart3 size={18} /> View Quick Summary
+        </button>
       </div>
 
-      {/* ---------------- Demo Test Modal ---------------- */}
+      <div className="mt-8 flex justify-center">
+        <div className="w-64 bg-slate-200 rounded-full h-2">
+          <div
+            className="bg-indigo-600 h-2 rounded-full"
+            style={{ width: "85%" }}
+          ></div>
+        </div>
+      </div>
+      <p className="text-xs text-slate-500 mt-2">
+        AI estimates: 85% report accuracy based on latest data
+      </p>
+    </div>
+  </motion.div>
+)}
+
+      </main>
+
+      {/* ---------------- Demo/Micro Test Modal ---------------- */}
       {demoActive && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl overflow-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl overflow-auto">
             <div className="p-4 border-b flex justify-between items-center">
               <div>
-                <h2 className="font-bold text-lg">Demo 15-question Test</h2>
-                <p className="text-xs text-slate-600">This demo helps adapt your weak topics. No pressure — it's for practice.</p>
+                <h2 className="font-bold text-lg">Micro Test — 15 Questions (Demo)</h2>
+                <p className="text-xs text-slate-500">Timed practice to improve weak topics</p>
               </div>
-              <div className="flex gap-2">
-                {!demoSubmitted ? (
-                  <div className="text-sm text-slate-500">Q {currentQ + 1} / {demoQuestionsSeed.length}</div>
-                ) : null}
+              <div className="flex gap-2 items-center">
+                {!demoSubmitted ? <div className="text-sm text-slate-500">Q {currentQ + 1} / {demoQuestionsSeed.length}</div> : null}
                 <button className="text-sm text-slate-500" onClick={() => { setDemoActive(false); setDemoSubmitted(false); }}>Close</button>
               </div>
             </div>
@@ -493,8 +821,9 @@ export default function StudentDashboard() {
                   <h3 className="text-2xl font-bold mb-2">Results</h3>
                   <p className="text-lg mb-2">You scored <span className="font-semibold">{demoScore}</span> / {demoQuestionsSeed.length}</p>
                   <p className="text-sm text-slate-600 mb-4">
-                    {demoScore / demoQuestionsSeed.length >= 0.7 ? "Great work — keep the consistency!" : "Target weak topics from the recommendations below."}
+                    {demoScore / demoQuestionsSeed.length >= 0.7 ? "Great work — keep this consistency!" : "Target weak topics from the recommendations below."}
                   </p>
+
                   <div className="text-left">
                     <h4 className="font-semibold mb-2">AI Recommendations (From Demo)</h4>
                     <ul className="list-disc ml-6 text-sm text-slate-700">
@@ -509,7 +838,7 @@ export default function StudentDashboard() {
 
                   <div className="mt-6 flex justify-center gap-3">
                     <button onClick={() => { setDemoActive(false); setDemoSubmitted(false); }} className="px-4 py-2 border rounded">Close</button>
-                    <button onClick={() => { /* keep modal open to retake */ setDemoSubmitted(false); setCurrentQ(0); setSelectedAnswers({}); setDemoScore(0); }} className="px-4 py-2 bg-emerald-600 text-white rounded">Retake</button>
+                    <button onClick={() => { setDemoSubmitted(false); setCurrentQ(0); setSelectedAnswers({}); setDemoScore(0); }} className="px-4 py-2 bg-emerald-600 text-white rounded">Retake</button>
                   </div>
                 </div>
               )}
