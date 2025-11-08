@@ -1,241 +1,332 @@
 "use client";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import {
+  Users,
+  BarChart3,
+  Brain,
+  Upload,
+  FileText,
+  AlertTriangle,
+  BookOpen,
+  PlusCircle,
+} from "lucide-react";
+import {
+  ResponsiveContainer,
   LineChart,
   Line,
   CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
   BarChart,
   Bar,
-  Legend,
 } from "recharts";
 
-// Mock data — AI-processed test scores
-const students = [
-  {
-    id: 1,
-    name: "Swanand V. Bagale",
-    scores: [
-      { test: "Test 51", marks: 540 },
-      { test: "Test 57", marks: 647 },
-      { test: "Test 61", marks: 630 },
-    ],
-    avg: 606,
-    weakArea: "Biology – Diagrams",
-  },
-  {
-    id: 2,
-    name: "Riya Sharma",
-    scores: [
-      { test: "Test 51", marks: 580 },
-      { test: "Test 57", marks: 600 },
-      { test: "Test 61", marks: 655 },
-    ],
-    avg: 612,
-    weakArea: "Physics – EMI",
-  },
-  {
-    id: 3,
-    name: "Aarav Mehta",
-    scores: [
-      { test: "Test 51", marks: 620 },
-      { test: "Test 57", marks: 680 },
-      { test: "Test 61", marks: 695 },
-    ],
-    avg: 665,
-    weakArea: "Chemistry – Organic Mechanism",
-  },
-];
-
-// Mock batch-wise AI recommendation
-const batchAIInsights = [
-  {
-    batch: "Batch 1",
-    weakTopics: ["Physics – EMI", "Biology – Diagrams"],
-    avgImprovement: "+8.5%",
-  },
-  {
-    batch: "Batch 2",
-    weakTopics: ["Chemistry – Thermodynamics", "Biology – Genetics"],
-    avgImprovement: "+6.2%",
-  },
-  {
-    batch: "Batch 3",
-    weakTopics: ["Physics – Magnetism", "Chemistry – Ionic Equilibrium"],
-    avgImprovement: "+5.7%",
-  },
-];
-
 export default function TeacherDashboard() {
-  const [selectedStudent, setSelectedStudent] = useState(students[0]);
-  const [focusTopic, setFocusTopic] = useState("");
-  const [teacherNotes, setTeacherNotes] = useState([]);
+  const [activeSection, setActiveSection] = useState("overview");
 
-  const handleSaveNote = () => {
-    if (focusTopic.trim() !== "") {
-      setTeacherNotes([
-        ...teacherNotes,
-        { student: selectedStudent.name, topic: focusTopic },
-      ]);
-      setFocusTopic("");
-    }
-  };
+  const sections = [
+    { id: "overview", title: "Overview", icon: <Users size={18} /> },
+    {
+      id: "performance",
+      title: "Batch Performance",
+      icon: <BarChart3 size={18} />,
+    },
+    { id: "ai", title: "AI Insights", icon: <Brain size={18} /> },
+    { id: "tests", title: "Manage Tests", icon: <Upload size={18} /> },
+    { id: "reports", title: "Reports", icon: <FileText size={18} /> },
+  ];
+
+  const batchPerformance = [
+    { batch: "Batch 1", avgScore: 82 },
+    { batch: "Batch 2", avgScore: 76 },
+    { batch: "Batch 3", avgScore: 68 },
+    { batch: "Batch 4", avgScore: 91 },
+    { batch: "Batch 5", avgScore: 85 },
+  ];
+
+  const weakTopics = [
+    { batch: "Batch 2", topic: "Chemical Reactions" },
+    { batch: "Batch 3", topic: "Force & Motion" },
+    { batch: "Batch 5", topic: "Photosynthesis" },
+  ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <div className="min-h-screen flex bg-slate-50">
+      {/* Sidebar */}
+      <aside className="w-60 bg-white border-r border-slate-200 flex flex-col justify-between fixed inset-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">
-            Teacher Dashboard
-          </h1>
-          <p className="text-slate-600">Monitor Student Progress & Batch Insights</p>
-        </div>
-        <button
-          onClick={() => alert("Simulating AI re-analysis...")}
-          className="bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700"
-        >
-          Run AI Batch Analysis
-        </button>
-      </div>
-
-      {/* Student selector */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="font-semibold mb-3">Select Student</h3>
-        <select
-          className="border p-2 rounded w-full md:w-1/2"
-          value={selectedStudent.id}
-          onChange={(e) =>
-            setSelectedStudent(
-              students.find((s) => s.id === Number(e.target.value))
-            )
-          }
-        >
-          {students.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Student Progress Chart */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="font-semibold mb-2">
-          {selectedStudent.name}'s Progress (Last 3 Tests)
-        </h3>
-        <div style={{ width: "100%", height: 250 }}>
-          <ResponsiveContainer>
-            <LineChart data={selectedStudent.scores}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="test" />
-              <YAxis domain={[0, 720]} />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="marks"
-                stroke="#2563EB"
-                strokeWidth={3}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="mt-3 flex justify-between text-sm text-slate-600">
-          <p>Average Score: <b>{selectedStudent.avg}</b></p>
-          <p>Weak Area: <b>{selectedStudent.weakArea}</b></p>
-        </div>
-      </div>
-
-      {/* Teacher Suggest Focus Topic */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="font-semibold mb-3">
-          Suggest Focus Topic for {selectedStudent.name}
-        </h3>
-        <div className="flex flex-col md:flex-row gap-2">
-          <input
-            type="text"
-            placeholder="Enter focus topic..."
-            value={focusTopic}
-            onChange={(e) => setFocusTopic(e.target.value)}
-            className="border p-2 rounded flex-grow"
-          />
-          <button
-            onClick={handleSaveNote}
-            className="bg-emerald-600 text-white px-4 py-2 rounded shadow hover:bg-emerald-700"
-          >
-            Save Suggestion
-          </button>
-        </div>
-
-        {/* Teacher Notes List */}
-        {teacherNotes.length > 0 && (
-          <div className="mt-4">
-            <h4 className="font-semibold mb-1 text-sm text-slate-700">
-              Saved Focus Topics
-            </h4>
-            <ul className="list-disc ml-6 text-sm text-slate-700 space-y-1">
-              {teacherNotes.map((note, i) => (
-                <li key={i}>
-                  <b>{note.student}:</b> {note.topic}
-                </li>
-              ))}
-            </ul>
+          <div className="p-4 border-b border-slate-200">
+            <h2 className="text-lg font-bold text-indigo-600">Teacher Panel</h2>
           </div>
-        )}
-      </div>
 
-      {/* AI Batch Recommendation */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="font-semibold mb-3">AI Batch Insights & Recommendations</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="border-b bg-slate-100 text-left">
-                <th className="py-2 px-2">Batch</th>
-                <th className="py-2 px-2">Weak Topics</th>
-                <th className="py-2 px-2">Avg Improvement</th>
-              </tr>
-            </thead>
-            <tbody>
-              {batchAIInsights.map((b, i) => (
-                <tr key={i} className="border-b hover:bg-slate-50">
-                  <td className="py-2 px-2 font-medium">{b.batch}</td>
-                  <td className="py-2 px-2">{b.weakTopics.join(", ")}</td>
-                  <td className="py-2 px-2 text-emerald-600 font-semibold">
-                    {b.avgImprovement}
-                  </td>
-                </tr>
+          <nav className="p-3 flex flex-col gap-2">
+            {sections.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setActiveSection(s.id)}
+                className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md font-medium transition-all ${
+                  activeSection === s.id
+                    ? "bg-indigo-100 text-indigo-700"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                {s.icon} {s.title}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        <div className="p-4 border-t border-slate-200 text-xs text-slate-500">
+          © 2025 Intelligent Revision Plan
+        </div>
+      </aside>
+
+      {/* Main Section */}
+      <main className="ml-60 flex-1 p-6 space-y-8">
+        {/* ===== Overview ===== */}
+        {activeSection === "overview" && (
+          <motion.div
+            key="overview"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <h1 className="text-2xl font-bold text-slate-800 mb-6">
+              Dashboard Overview
+            </h1>
+
+            {/* Stats */}
+            <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+              {[
+                { label: "Total Students", value: "125" },
+                { label: "Batches Managed", value: "5" },
+                { label: "Avg Class Accuracy", value: "83%" },
+                { label: "AI Confidence", value: "90%" },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="bg-white p-5 rounded-xl shadow-sm border border-slate-100"
+                >
+                  <h3 className="text-sm text-slate-500 mb-1">{stat.label}</h3>
+                  <p className="text-2xl font-bold text-indigo-600">
+                    {stat.value}
+                  </p>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </div>
 
-      {/* Class-wide Performance Overview */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="font-semibold mb-3">Class Average Performance</h3>
-        <div style={{ width: "100%", height: 250 }}>
-          <ResponsiveContainer>
-            <BarChart
-              data={students.map((s) => ({
-                name: s.name.split(" ")[0],
-                average: s.avg,
-              }))}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis domain={[0, 720]} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="average" fill="#6366F1" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+            {/* Charts */}
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Line Chart */}
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h3 className="text-lg font-semibold text-slate-800 mb-3">
+                  Average Batch Performance
+                </h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={batchPerformance}>
+                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                    <XAxis dataKey="batch" />
+                    <YAxis domain={[60, 100]} />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="avgScore"
+                      stroke="#6366f1"
+                      strokeWidth={3}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Weak Topics */}
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h3 className="text-lg font-semibold text-slate-800 mb-3">
+                  AI-Detected Weak Topics
+                </h3>
+                <ul className="divide-y divide-slate-200">
+                  {weakTopics.map((w, i) => (
+                    <li
+                      key={i}
+                      className="py-3 flex items-center justify-between"
+                    >
+                      <div>
+                        <p className="text-slate-800 font-medium">{w.topic}</p>
+                        <p className="text-slate-500 text-xs">{w.batch}</p>
+                      </div>
+                      <AlertTriangle className="text-amber-500" size={18} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ===== Batch Performance ===== */}
+        {activeSection === "performance" && (
+          <motion.div
+            key="performance"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <h1 className="text-2xl font-bold text-slate-800 mb-6">
+              Batch Performance Overview
+            </h1>
+
+            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={batchPerformance}>
+                  <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                  <XAxis dataKey="batch" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar
+                    dataKey="avgScore"
+                    fill="#4f46e5"
+                    radius={[6, 6, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+
+              <div className="mt-6 text-sm text-slate-600">
+                AI notes: Batch 3 needs focused revision on Physics numericals.
+                Batch 4 is showing outstanding improvement (+9% this week).
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ===== AI Insights ===== */}
+        {activeSection === "ai" && (
+          <motion.div
+            key="ai"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <h1 className="text-2xl font-bold text-slate-800 mb-4">
+              AI Insights & Batch Recommendations
+            </h1>
+            <p className="text-slate-600 mb-6">
+              The AI engine analyzes all batches weekly and highlights where
+              targeted support is needed.
+            </p>
+
+            <div className="grid lg:grid-cols-3 gap-6">
+              {[
+                {
+                  tag: "Critical",
+                  color: "bg-red-100 text-red-700",
+                  batch: "Batch 3",
+                  topic: "Force & Motion",
+                  insight:
+                    "Low accuracy in formula application. Suggested additional micro-tests.",
+                },
+                {
+                  tag: "Improving",
+                  color: "bg-green-100 text-green-700",
+                  batch: "Batch 2",
+                  topic: "Chemical Reactions",
+                  insight:
+                    "Accuracy improving by 12%. Maintain alternate-day practice tests.",
+                },
+                {
+                  tag: "Stable",
+                  color: "bg-blue-100 text-blue-700",
+                  batch: "Batch 4",
+                  topic: "Sound & Waves",
+                  insight:
+                    "Consistent high accuracy. Schedule AI quiz to verify retention.",
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition"
+                >
+                  <div className="flex justify-between mb-2">
+                    <span
+                      className={`text-xs font-medium px-2 py-1 rounded-full ${item.color}`}
+                    >
+                      {item.tag}
+                    </span>
+                    <span className="text-xs text-slate-400">{item.batch}</span>
+                  </div>
+                  <h4 className="font-semibold text-slate-800 mb-1">
+                    {item.topic}
+                  </h4>
+                  <p className="text-sm text-slate-600">{item.insight}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* ===== Manage Tests ===== */}
+        {activeSection === "tests" && (
+          <motion.div
+            key="tests"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <h1 className="text-2xl font-bold text-slate-800 mb-4">
+              Manage Test Data
+            </h1>
+
+            <div className="bg-white p-8 rounded-xl border border-slate-100 shadow-sm text-center">
+              <BookOpen size={40} className="text-indigo-500 mx-auto mb-4" />
+              <p className="text-slate-600 mb-4">
+                Upload question papers and student answer data to update
+                analytics.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 shadow flex items-center justify-center gap-2">
+                  <Upload size={18} /> Upload Test Paper
+                </button>
+                <button className="border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-indigo-50 flex items-center justify-center gap-2">
+                  <PlusCircle size={18} /> Add Student Scores
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ===== Reports ===== */}
+        {activeSection === "reports" && (
+          <motion.div
+            key="reports"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <h1 className="text-2xl font-bold text-slate-800 mb-6">
+              Batch Reports & Downloads
+            </h1>
+
+            <div className="bg-gradient-to-r from-indigo-50 to-slate-50 p-8 rounded-xl border border-slate-200 shadow-sm text-center">
+              <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                Download Batch Performance Report
+              </h3>
+              <p className="text-slate-600 mb-6">
+                Get detailed insights for each batch, including top students,
+                AI-detected weaknesses, and test consistency graphs.
+              </p>
+
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 shadow flex items-center justify-center gap-2">
+                  <FileText size={18} /> Download Full Batch Report
+                </button>
+                <button className="border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-indigo-50 flex items-center justify-center gap-2">
+                  <BarChart3 size={18} /> View Batch Analytics
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </main>
     </div>
   );
 }
