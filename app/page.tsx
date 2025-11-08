@@ -1,130 +1,425 @@
+// app/page.jsx
 "use client";
-import Link from "next/link";
-import { motion } from "framer-motion";
 
-export default function HomePage() {
+import Image from "next/image";
+import Demopage from "../public/images/DemoPage.png";
+
+export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-indigo-50 to-white text-slate-800 overflow-x-hidden">
-     
+    <div className="min-h-screen">
+      {/* NAVBAR */}
+      <header className="sticky top-0 z-40 bg-white/60 backdrop-blur-sm border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">
+                IR
+              </div>
+              <div className="text-lg font-semibold text-slate-900">
+                IRP — Intelligent Revision Plan
+              </div>
+            </div>
 
-      {/* Hero Section */}
-      <section className="flex flex-col-reverse lg:flex-row items-center justify-between px-6 md:px-16 lg:px-20 py-12 md:py-20 text-center lg:text-left gap-10">
-        <motion.div
-          className="lg:w-1/2 space-y-5"
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 leading-snug">
-            Learn Smart, <span className="text-indigo-600">Revise Smarter</span>
-          </h2>
-          <p className="text-slate-600 text-sm sm:text-base md:text-lg max-w-lg mx-auto lg:mx-0">
-            Empowering Students, Teachers, Parents, and Counselors through AI-driven insights and real-time performance tracking.
-          </p>
-          <div className="flex justify-center lg:justify-start gap-3 sm:gap-4 flex-wrap">
-            <Link
-              href="/login"
-              className="bg-indigo-600 text-white px-5 py-3 rounded-lg font-medium hover:bg-indigo-700"
-            >
-              Get Started
-            </Link>
-            <Link
-              href="#features"
-              className="border border-indigo-600 text-indigo-600 px-5 py-3 rounded-lg font-medium hover:bg-indigo-50"
-            >
-              Explore Features
-            </Link>
+            <nav className="hidden md:flex items-center gap-6 text-sm text-slate-700">
+              <a className="hover:text-indigo-600" href="#about">
+                About
+              </a>
+              <a className="hover:text-indigo-600" href="#analytics">
+                Analytics
+              </a>
+              <a className="hover:text-indigo-600" href="#features">
+                Features
+              </a>
+              <a className="hover:text-indigo-600" href="#how">
+                How it works
+              </a>
+              <a
+                href="/login"
+                className="ml-4 inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-white font-medium shadow hover:bg-indigo-700"
+              >
+                Login
+              </a>
+            </nav>
+
+            <div className="md:hidden">
+              <a
+                href="/login"
+                className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-1.5 text-white text-sm"
+              >
+                Login
+              </a>
+            </div>
           </div>
-        </motion.div>
+        </div>
+      </header>
 
-        <motion.div
-          className="lg:w-1/2 flex justify-center"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.7 }}
-        >
-          <img
-            src="https://cdn.elearningindustry.com/wp-content/uploads/2024/03/Navigating-The-Future-The-Rise-Of-Hybrid-Learning-In-The-Age-Of-AI.jpg"
-            alt="Dashboard Preview"
-            className="w-64 sm:w-80 md:w-96 drop-shadow-xl"
-          />
-        </motion.div>
-      </section>
+      {/* HERO */}
+      <section className="pt-12 pb-20">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium mb-4">
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  d="M3 12h18"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              AI-Powered • Personalized
+            </div>
 
-      {/* Features Section */}
-      <section id="features" className="px-6 sm:px-10 md:px-16 lg:px-20 py-14 bg-white">
-        <motion.h3
-          className="text-2xl sm:text-3xl font-bold text-center mb-12 text-slate-900"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          One Platform, Four Perspectives
-        </motion.h3>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight mb-6">
+              Revolutionize learning with{" "}
+              <span className="text-indigo-600">AI-driven revision plans</span>
+            </h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            {
-              title: "Student Dashboard",
-              desc: "Track progress, take AI-driven tests, and improve weak topics with smart revision plans.",
-              icon: "🎓",
-            },
-            {
-              title: "Teacher Dashboard",
-              desc: "Analyze class performance, assign focus topics, and monitor improvement across batches.",
-              icon: "🧑‍🏫",
-            },
-            {
-              title: "Parent Dashboard",
-              desc: "View consistency reports, performance alerts, and AI-recommended study plans.",
-              icon: "👨‍👩‍👧",
-            },
-            {
-              title: "Counselor Panel",
-              desc: "Access detailed student insights, identify weak areas, and support mentorship.",
-              icon: "🧠",
-            },
-          ].map((f, i) => (
-            <motion.div
-              key={i}
-              className="bg-indigo-50 hover:bg-indigo-100 rounded-xl p-6 text-center shadow-sm transition-all"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <div className="text-3xl mb-3">{f.icon}</div>
-              <h4 className="font-semibold text-base sm:text-lg mb-2">{f.title}</h4>
-              <p className="text-sm text-slate-600">{f.desc}</p>
-            </motion.div>
-          ))}
+            <p className="text-slate-600 text-lg max-w-2xl mb-8">
+              Intelligent Revision Plan analyzes tests and micro-tests to build
+              personalized revision schedules, give teachers batch-level
+              guidance, help counselors find students who need support, and keep
+              parents informed — all in one unified platform.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="/login"
+                className="inline-flex items-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow-lg font-medium transition"
+              >
+                Get started — Free demo
+                <svg
+                  className="w-4 h-4 opacity-90"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M5 12h14M12 5l7 7-7 7"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
+
+              <a
+                href="#analytics"
+                className="inline-flex items-center gap-2 text-indigo-600 px-4 py-3 rounded-lg border border-indigo-100 hover:bg-indigo-50 transition"
+              >
+                See analytics
+              </a>
+            </div>
+
+            <div className="mt-8 flex items-center gap-6 text-xs text-slate-500">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-700 font-semibold">
+                  P
+                </div>
+                <div>
+                  <div className="text-slate-800 font-medium">
+                    Featured on Product Hunt
+                  </div>
+                  <div>Trusted by modern schools</div>
+                </div>
+              </div>
+
+              <div className="h-6 w-px bg-slate-200" />
+
+              <div className="flex items-center gap-3">
+                <div className="text-slate-700 font-medium">1000+</div>
+                <div className="text-slate-500">students trained</div>
+              </div>
+            </div>
+          </div>
+
+          {/* HERO IMAGE (full width card) */}
+          <div className="w-full">
+            <div className="rounded-2xl shadow-2xl overflow-hidden border border-slate-100 bg-white">
+              {/* Replace with your screenshot in public/images/hero-dashboard.png */}
+              <Image
+                src={Demopage}
+                alt="Dashboard preview"
+                width={1200}
+                height={700}
+                className="object-cover w-full h-full"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <motion.section
-        id="about"
-        className="px-6 md:px-20 py-16 bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-center rounded-t-3xl shadow-lg"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <h3 className="text-2xl sm:text-3xl font-bold mb-4">AI-Driven Learning Experience</h3>
-        <p className="max-w-2xl mx-auto text-indigo-100 text-sm sm:text-base mb-6">
-          Intelligent Revision Plan uses test data and AI to create personalized schedules, identify weak areas, and predict performance — helping every student reach their potential.
-        </p>
-        <Link
-          href="/login"
-          className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold shadow hover:bg-indigo-50 text-sm sm:text-base"
-        >
-          Get Started Now
-        </Link>
-      </motion.section>
+      {/* ANALYTICS SECTION */}
+      <section id="analytics" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <div className="text-sm font-medium text-indigo-600 inline-block mb-2">
+              Analytics
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Get detailed analytics for every student
+            </h2>
+            <p className="text-slate-600">
+              Visualize growth, identify learning gaps, and make data-driven
+              decisions to enhance outcomes for every learner.
+            </p>
+          </div>
 
-      {/* Footer */}
-      <footer className="text-center text-xs sm:text-sm text-slate-500 py-6 bg-white">
-        © 2025 Intelligent Revision Plan — Powered by AI | Designed by Creative Edge
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="bg-indigo-50 rounded-2xl p-6 border border-indigo-100 shadow-sm">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                  <div className="text-xs text-slate-500">Exam performance</div>
+                  <div className="mt-4 h-36 bg-gradient-to-tr from-indigo-100/30 to-transparent rounded" />
+                </div>
+
+                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                  <div className="text-xs text-slate-500">
+                    Subject performance
+                  </div>
+                  <div className="mt-4 h-36 bg-gradient-to-tr from-indigo-100/30 to-transparent rounded" />
+                </div>
+
+                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                  <div className="text-xs text-slate-500">SWOT analysis</div>
+                  <div className="mt-4 h-36 bg-gradient-to-tr from-indigo-100/30 to-transparent rounded" />
+                </div>
+
+                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                  <div className="text-xs text-slate-500">
+                    Performance comparison
+                  </div>
+                  <div className="mt-4 h-36 bg-gradient-to-tr from-indigo-100/30 to-transparent rounded" />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <h3 className="text-lg font-semibold text-slate-800 mb-3">
+                  Actionable insights
+                </h3>
+                <p className="text-slate-600 mb-4">
+                  AI detects weak topics, suggests micro-tests, and builds
+                  focused revision schedules — all automated.
+                </p>
+
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <div className="mt-1 w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center font-semibold">
+                      1
+                    </div>
+                    <div>
+                      <div className="font-medium text-slate-800">
+                        Weak topic detection
+                      </div>
+                      <div className="text-slate-600 text-sm">
+                        Pinpoints low-retention concepts via last 3 tests.
+                      </div>
+                    </div>
+                  </li>
+
+                  <li className="flex items-start gap-3">
+                    <div className="mt-1 w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center font-semibold">
+                      2
+                    </div>
+                    <div>
+                      <div className="font-medium text-slate-800">
+                        Micro-tests
+                      </div>
+                      <div className="text-slate-600 text-sm">
+                        Alternate-day quick tests refine accuracy on topics that
+                        matter.
+                      </div>
+                    </div>
+                  </li>
+
+                  <li className="flex items-start gap-3">
+                    <div className="mt-1 w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center font-semibold">
+                      3
+                    </div>
+                    <div>
+                      <div className="font-medium text-slate-800">
+                        Counselor signals
+                      </div>
+                      <div className="text-slate-600 text-sm">
+                        Emotion & attendance correlations help identify students
+                        who need support.
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="mt-6 flex gap-3">
+                <a
+                  href="/signup"
+                  className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow"
+                >
+                  Request a demo
+                </a>
+                <a
+                  href="#features"
+                  className="inline-flex items-center gap-2 border border-indigo-100 px-4 py-2 rounded-lg text-indigo-600"
+                >
+                  Explore features
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section id="features" className="py-20">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="text-sm font-medium text-indigo-600">
+              Core features
+            </div>
+            <h2 className="text-3xl font-bold text-slate-900 mt-3">
+              Built for schools, teachers & parents
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Multiple logins",
+                desc: "Students, Teachers, Parents, Counselors, Admins",
+                accent: "user",
+              },
+              {
+                title: "AI Performance Analytics",
+                desc: "Charts, trends, and batch insights",
+                accent: "chart",
+              },
+              {
+                title: "Smart Revision Plans",
+                desc: "Personalized schedules & micro-tests",
+                accent: "plan",
+              },
+              {
+                title: "Easy Uploads",
+                desc: "Upload question papers & answer sheets",
+                accent: "upload",
+              },
+              {
+                title: "Counselor Support",
+                desc: "Emotion & attendance correlations",
+                accent: "heart",
+              },
+              {
+                title: "PDF Reports",
+                desc: "Downloadable, teacher/parent friendly reports",
+                accent: "file",
+              },
+            ].map((f, i) => (
+              <div
+                key={i}
+                className="relative bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition"
+              >
+                <div className="absolute -top-6 right-6 bg-indigo-50 rounded-full w-12 h-12 flex items-center justify-center text-indigo-600 font-semibold">
+                  {i + 1}
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                  {f.title}
+                </h3>
+                <p className="text-slate-600 text-sm">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section id="how" className="py-20 bg-indigo-50">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-slate-900 mb-6">
+            How it works
+          </h2>
+          <p className="text-slate-600 mb-10">
+            Simple 3-step flow to get your students on a smarter revision
+            journey.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+              <div className="text-indigo-600 font-semibold mb-3">
+                1. Upload
+              </div>
+              <div className="text-slate-800 font-semibold mb-2">
+                Add question papers & answers
+              </div>
+              <div className="text-slate-600 text-sm">
+                Upload PDF or CSV, map student answers and tests.
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+              <div className="text-indigo-600 font-semibold mb-3">
+                2. Analyze
+              </div>
+              <div className="text-slate-800 font-semibold mb-2">
+                AI analyzes patterns
+              </div>
+              <div className="text-slate-600 text-sm">
+                Find weak topics, common errors and batch trends.
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+              <div className="text-indigo-600 font-semibold mb-3">3. Act</div>
+              <div className="text-slate-800 font-semibold mb-2">
+                Generate revision plans
+              </div>
+              <div className="text-slate-600 text-sm">
+                Share with students, parents and counselors instantly.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA FOOTER */}
+      <section className="py-16 bg-white border-t border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 className="text-xl font-bold text-slate-900">
+              Ready to try IRP?
+            </h3>
+            <p className="text-slate-600">
+              Book a demo or sign up and bring AI into your classroom workflow.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <a
+              href="/signup"
+              className="bg-indigo-600 text-white px-5 py-3 rounded-lg shadow hover:bg-indigo-700"
+            >
+              Request demo
+            </a>
+            <a
+              href="/contact"
+              className="px-5 py-3 rounded-lg border border-slate-200"
+            >
+              Contact sales
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-white py-8 text-center text-sm text-slate-500 border-t border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          © {new Date().getFullYear()} Intelligent Revision Plan — Built by
+          CreativeEdge.
+        </div>
       </footer>
-    </main>
+    </div>
   );
 }
