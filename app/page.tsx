@@ -1,6 +1,6 @@
 // app/page.jsx
 "use client";
-
+// import DemoModal from "@/components/DemoModal";
 import Image from "next/image";
 import Demopage from "../public/images/DemoPage.png";
 
@@ -171,31 +171,58 @@ export default function Home() {
 
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="bg-indigo-50 rounded-2xl p-6 border border-indigo-100 shadow-sm">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-                  <div className="text-xs text-slate-500">Exam performance</div>
-                  <div className="mt-4 h-36 bg-gradient-to-tr from-indigo-100/30 to-transparent rounded" />
-                </div>
+             <section className="w-full py-10">
+  <div className="grid sm:grid-cols-2 gap-6">
+    {/* === Exam Performance === */}
+    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+      <h3 className="text-sm font-medium text-slate-700 mb-3">Exam Performance</h3>
+      <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+        <img
+          src="/images/img1.png"
+          alt="Exam performance chart"
+          className="object-contain w-full h-full"
+        />
+      </div>
+    </div>
 
-                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-                  <div className="text-xs text-slate-500">
-                    Subject performance
-                  </div>
-                  <div className="mt-4 h-36 bg-gradient-to-tr from-indigo-100/30 to-transparent rounded" />
-                </div>
+    {/* === Subject Performance === */}
+    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+      <h3 className="text-sm font-medium text-slate-700 mb-3">Subject Performance</h3>
+      <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+        <img
+          src="/images/subject-performance.png"
+          alt="Subject performance chart"
+          className="object-contain w-full h-full"
+        />
+      </div>
+    </div>
 
-                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-                  <div className="text-xs text-slate-500">SWOT analysis</div>
-                  <div className="mt-4 h-36 bg-gradient-to-tr from-indigo-100/30 to-transparent rounded" />
-                </div>
+    {/* === SWOT Analysis === */}
+    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+      <h3 className="text-sm font-medium text-slate-700 mb-3">SWOT Analysis</h3>
+      <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+        <img
+          src="/images/swot-analysis.png"
+          alt="SWOT analysis chart"
+          className="object-contain w-full h-full"
+        />
+      </div>
+    </div>
 
-                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-                  <div className="text-xs text-slate-500">
-                    Performance comparison
-                  </div>
-                  <div className="mt-4 h-36 bg-gradient-to-tr from-indigo-100/30 to-transparent rounded" />
-                </div>
-              </div>
+    {/* === Performance Comparison === */}
+    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+      <h3 className="text-sm font-medium text-slate-700 mb-3">Performance Comparison</h3>
+      <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+        <img
+          src="/images/performance-comparison.png"
+          alt="Performance comparison chart"
+          className="object-contain w-full h-full"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
             </div>
 
             <div>
