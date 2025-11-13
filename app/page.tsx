@@ -511,7 +511,7 @@ const [selectedTime, setSelectedTime] = useState<string | null>(null);
                     {dates.map((day) => (
                       <button
                         key={day}
-                        onClick={() => setSelectedDate(day)}
+                        onClick={() => setSelectedDate(Number(day))}
                         className={`rounded-lg py-2 text-sm font-medium ${
                           selectedDate === day
                             ? "bg-indigo-600 text-white"
