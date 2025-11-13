@@ -9,8 +9,10 @@ import { X, Calendar, Clock, Mail } from "lucide-react";
 
 export default function Home() {
    const [showModal, setShowModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
+const [selectedDate, setSelectedDate] = useState<number | null>(null);
+const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
+
 
   const dates = Array.from({ length: 15 }, (_, i) => i + 11);
   const times = ["10:00 AM", "11:30 AM", "1:00 PM", "2:30 PM", "4:00 PM", "5:30 PM"];
