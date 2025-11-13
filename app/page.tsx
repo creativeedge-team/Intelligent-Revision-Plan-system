@@ -8,14 +8,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Clock, Mail } from "lucide-react";
 
 export default function Home() {
-   const [showModal, setShowModal] = useState(false);
-const [selectedDate, setSelectedDate] = useState<number | null>(null);
-const [selectedTime, setSelectedTime] = useState<string | null>(null);
-
-
+  const [showModal, setShowModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<number | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const dates = Array.from({ length: 15 }, (_, i) => i + 11);
-  const times = ["10:00 AM", "11:30 AM", "1:00 PM", "2:30 PM", "4:00 PM", "5:30 PM"];
+  const times = [
+    "10:00 AM",
+    "11:30 AM",
+    "1:00 PM",
+    "2:30 PM",
+    "4:00 PM",
+    "5:30 PM",
+  ];
   return (
     <div className="min-h-screen">
       {/* NAVBAR */}
@@ -98,10 +103,8 @@ const [selectedTime, setSelectedTime] = useState<string | null>(null);
             </p>
 
             <div className="flex flex-wrap gap-4">
-       
-       
               <button
-              onClick={() => setShowModal(true)}
+                onClick={() => setShowModal(true)}
                 className="inline-flex items-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow-lg font-medium transition"
               >
                 Get started — Free demo
@@ -184,58 +187,65 @@ const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="bg-indigo-50 rounded-2xl p-6 border border-indigo-100 shadow-sm">
-             <section className="w-full py-10">
-  <div className="grid sm:grid-cols-2 gap-6">
-    {/* === Exam Performance === */}
-    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
-      <h3 className="text-sm font-medium text-slate-700 mb-3">Exam Performance</h3>
-      <div className="relative w-full aspect-video rounded-xl overflow-hidden">
-        <img
-          src="/images/img1.png"
-          alt="Exam performance chart"
-          className="object-contain w-full h-full"
-        />
-      </div>
-    </div>
+              <section className="w-full py-10">
+                <div className="grid sm:grid-cols-2 gap-6">
+                  {/* === Exam Performance === */}
+                  <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+                    <h3 className="text-sm font-medium text-slate-700 mb-3">
+                      Exam Performance
+                    </h3>
+                    <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+                      <img
+                        src="/images/img1.png"
+                        alt="Exam performance chart"
+                        className="object-contain w-full h-full"
+                      />
+                    </div>
+                  </div>
 
-    {/* === Subject Performance === */}
-    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
-      <h3 className="text-sm font-medium text-slate-700 mb-3">Subject Performance</h3>
-      <div className="relative w-full aspect-video rounded-xl overflow-hidden">
-        <img
-          src="/images/subject-performance.png"
-          alt="Subject performance chart"
-          className="object-contain w-full h-full"
-        />
-      </div>
-    </div>
+                  {/* === Subject Performance === */}
+                  <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+                    <h3 className="text-sm font-medium text-slate-700 mb-3">
+                      Subject Performance
+                    </h3>
+                    <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+                      <img
+                        src="/images/subject-performance.png"
+                        alt="Subject performance chart"
+                        className="object-contain w-full h-full"
+                      />
+                    </div>
+                  </div>
 
-    {/* === SWOT Analysis === */}
-    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
-      <h3 className="text-sm font-medium text-slate-700 mb-3">SWOT Analysis</h3>
-      <div className="relative w-full aspect-video rounded-xl overflow-hidden">
-        <img
-          src="/images/swot-analysis.png"
-          alt="SWOT analysis chart"
-          className="object-contain w-full h-full"
-        />
-      </div>
-    </div>
+                  {/* === SWOT Analysis === */}
+                  <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+                    <h3 className="text-sm font-medium text-slate-700 mb-3">
+                      SWOT Analysis
+                    </h3>
+                    <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+                      <img
+                        src="/images/swot-analysis.png"
+                        alt="SWOT analysis chart"
+                        className="object-contain w-full h-full"
+                      />
+                    </div>
+                  </div>
 
-    {/* === Performance Comparison === */}
-    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
-      <h3 className="text-sm font-medium text-slate-700 mb-3">Performance Comparison</h3>
-      <div className="relative w-full aspect-video rounded-xl overflow-hidden">
-        <img
-          src="/images/performance-comparison.png"
-          alt="Performance comparison chart"
-          className="object-contain w-full h-full"
-        />
-      </div>
-    </div>
-  </div>
-</section>
-
+                  {/* === Performance Comparison === */}
+                  <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+                    <h3 className="text-sm font-medium text-slate-700 mb-3">
+                      Performance Comparison
+                    </h3>
+                    <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+                      <img
+                        src="/images/performance-comparison.png"
+                        alt="Performance comparison chart"
+                        className="object-contain w-full h-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
             </div>
 
             <div>
@@ -296,12 +306,12 @@ const [selectedTime, setSelectedTime] = useState<string | null>(null);
               </div>
 
               <div className="mt-6 flex gap-3">
-               <button
-        onClick={() => setShowModal(true)}
-        className="bg-indigo-600 text-white px-5 py-3 rounded-lg shadow hover:bg-indigo-700 transition"
-      >
-        Request a Demo
-      </button>
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="bg-indigo-600 text-white px-5 py-3 rounded-lg shadow hover:bg-indigo-700 transition"
+                >
+                  Request a Demo
+                </button>
                 <a
                   href="#features"
                   className="inline-flex items-center gap-2 border border-indigo-100 px-4 py-2 rounded-lg text-indigo-600"
@@ -438,11 +448,11 @@ const [selectedTime, setSelectedTime] = useState<string | null>(null);
           </div>
           <div className="flex gap-3">
             <button
-        onClick={() => setShowModal(true)}
-        className="bg-indigo-600 text-white px-5 py-3 rounded-lg shadow hover:bg-indigo-700 transition"
-      >
-        Request a Demo
-      </button>
+              onClick={() => setShowModal(true)}
+              className="bg-indigo-600 text-white px-5 py-3 rounded-lg shadow hover:bg-indigo-700 transition"
+            >
+              Request a Demo
+            </button>
             <a
               href="/contact"
               className="px-5 py-3 rounded-lg border border-slate-200"
@@ -452,7 +462,7 @@ const [selectedTime, setSelectedTime] = useState<string | null>(null);
           </div>
         </div>
       </section>
-       {/* Modal */}
+      {/* Modal */}
       <AnimatePresence>
         {showModal && (
           <motion.div
@@ -484,16 +494,20 @@ const [selectedTime, setSelectedTime] = useState<string | null>(null);
               <div className="grid md:grid-cols-2">
                 {/* Left Panel */}
                 <div className="p-6 border-r border-slate-100">
-                  <h3 className="font-semibold text-slate-900 mb-1">IRP Product Demo</h3>
+                  <h3 className="font-semibold text-slate-900 mb-1">
+                    IRP Product Demo
+                  </h3>
                   <p className="text-sm text-slate-600 mb-4">
-                    30-minute walkthrough of the Intelligent Revision Plan dashboard.
+                    30-minute walkthrough of the Intelligent Revision Plan
+                    dashboard.
                   </p>
 
                   <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
                     <Clock size={16} /> 30 min session
                   </div>
                   <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
-                    <Mail size={16} /> Web conferencing link shared upon confirmation.
+                    <Mail size={16} /> Web conferencing link shared upon
+                    confirmation.
                   </div>
 
                   <p className="text-xs text-slate-400 mt-6">
@@ -510,16 +524,16 @@ const [selectedTime, setSelectedTime] = useState<string | null>(null);
                   <div className="grid grid-cols-7 gap-2 mb-6">
                     {dates.map((day) => (
                       <button
-  key={day}
-  onClick={() => setSelectedDate(day as number)}
-  className={`rounded-lg py-2 text-sm font-medium ${
-    selectedDate === day
-      ? "bg-indigo-600 text-white"
-      : "bg-white text-slate-700 border border-slate-200 hover:bg-indigo-50"
-  }`}
->
-  {day}
-</button>
+                        key={day}
+                        onClick={() => setSelectedDate(day as number)}
+                        className={`rounded-lg py-2 text-sm font-medium ${
+                          selectedDate === day
+                            ? "bg-indigo-600 text-white"
+                            : "bg-white text-slate-700 border border-slate-200 hover:bg-indigo-50"
+                        }`}
+                      >
+                        {day}
+                      </button>
                     ))}
                   </div>
 
