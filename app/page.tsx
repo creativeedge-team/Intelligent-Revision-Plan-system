@@ -510,16 +510,16 @@ const [selectedTime, setSelectedTime] = useState<string | null>(null);
                   <div className="grid grid-cols-7 gap-2 mb-6">
                     {dates.map((day) => (
                       <button
-                        key={day}
-                        onClick={() => setSelectedDate(Number(day))}
-                        className={`rounded-lg py-2 text-sm font-medium ${
-                          selectedDate === day
-                            ? "bg-indigo-600 text-white"
-                            : "bg-white text-slate-700 border border-slate-200 hover:bg-indigo-50"
-                        }`}
-                      >
-                        {day}
-                      </button>
+  key={day}
+  onClick={() => setSelectedDate(day as number)}
+  className={`rounded-lg py-2 text-sm font-medium ${
+    selectedDate === day
+      ? "bg-indigo-600 text-white"
+      : "bg-white text-slate-700 border border-slate-200 hover:bg-indigo-50"
+  }`}
+>
+  {day}
+</button>
                     ))}
                   </div>
 
