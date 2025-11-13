@@ -30,7 +30,7 @@ export default function Home() {
             </div>
 
             <nav className="hidden md:flex items-center gap-6 text-sm text-slate-700">
-              <a className="hover:text-indigo-600" href="#about">
+              <a className="hover:text-indigo-600" href="/about">
                 About
               </a>
               <a className="hover:text-indigo-600" href="#analytics">
