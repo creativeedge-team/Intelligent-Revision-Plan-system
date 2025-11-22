@@ -1,4 +1,3 @@
-// app/page.jsx
 "use client";
 import Image from "next/image";
 import Demopage from "../public/images/DemoPage.png";
