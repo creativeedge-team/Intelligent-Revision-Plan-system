@@ -1,6 +1,5 @@
 // app/page.jsx
 "use client";
-// import DemoModal from "@/components/DemoModal";
 import Image from "next/image";
 import Demopage from "../public/images/DemoPage.png";
 import { useState } from "react";
