@@ -210,7 +210,7 @@ export default function Home() {
                     </h3>
                     <div className="relative w-full aspect-video rounded-xl overflow-hidden">
                       <img
-                        src="/images/subject-performance.png"
+                        src="/images/img2.png"
                         alt="Subject performance chart"
                         className="object-contain w-full h-full"
                       />
@@ -224,7 +224,7 @@ export default function Home() {
                     </h3>
                     <div className="relative w-full aspect-video rounded-xl overflow-hidden">
                       <img
-                        src="/images/swot-analysis.png"
+                        src="/images/img3.png"
                         alt="SWOT analysis chart"
                         className="object-contain w-full h-full"
                       />
@@ -238,7 +238,7 @@ export default function Home() {
                     </h3>
                     <div className="relative w-full aspect-video rounded-xl overflow-hidden">
                       <img
-                        src="/images/performance-comparison.png"
+                        src="/images/img4.png"
                         alt="Performance comparison chart"
                         className="object-contain w-full h-full"
                       />
