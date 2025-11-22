@@ -13,26 +13,27 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-     "paths": {
-      "@/*": ["*"]
+    "plugins": [{ "name": "next" }],
+
+    /* ← THE CRITICAL LINES BELOW */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@/app/*": ["app/*"],
+      "@/components/*": ["app/components/*"],
+      "@/public/*": ["public/*"]
     }
   },
-  "content": [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}"
-  ],
+
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts"
-, "app/layout.jsx"  ],
+    ".next/dev/types/**/*.ts"
+  ],
+
   "exclude": ["node_modules"]
 }
